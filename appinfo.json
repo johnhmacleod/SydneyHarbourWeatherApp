@@ -1,0 +1,58 @@
+{
+    "appKeys": {
+        "KEY_FORECAST_ISSUED": 9,
+        "KEY_GETFORECAST": 21,
+        "KEY_GETWEATHER": 20,
+        "KEY_TIME": 2,
+        "KEY_TIME1": 5,
+        "KEY_TIME2": 8,
+        "KEY_TIME3": 12,
+        "KEY_TIME4": 15,
+        "KEY_TIME5": 18,
+        "KEY_WIND_DIR": 1,
+        "KEY_WIND_DIR1": 4,
+        "KEY_WIND_DIR2": 7,
+        "KEY_WIND_DIR3": 11,
+        "KEY_WIND_DIR4": 14,
+        "KEY_WIND_DIR5": 17,
+        "KEY_WIND_SPEED": 0,
+        "KEY_WIND_SPEED1": 3,
+        "KEY_WIND_SPEED2": 6,
+        "KEY_WIND_SPEED3": 10,
+        "KEY_WIND_SPEED4": 13,
+        "KEY_WIND_SPEED5": 16
+    },
+    "capabilities": [
+        ""
+    ],
+    "companyName": "John MacLeod",
+    "longName": "Sydney Harbour Weather",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/background.png",
+                "name": "IMAGE_BACKGROUND",
+                "type": "png"
+            },
+            {
+                "file": "images/SydneyWeather.png",
+                "name": "MENU_IMAGE",
+                "type": "png"
+            },
+            {
+                "file": "images/SH28.png",
+                "menuIcon": true,
+                "name": "MENU_28",
+                "type": "png"
+            }
+        ]
+    },
+    "shortName": "HarbourWeather",
+    "uuid": "3a2ee932-3fc7-424f-a38b-77b6e1549362",
+    "versionCode": 1,
+    "versionLabel": "1.2",
+    "watchapp": {
+        "watchface": false
+    }
+}
