@@ -12,6 +12,7 @@
 #define KEY_FORECAST_ISSUED 9
 #define KEY_GETWEATHER 20
 #define KEY_GETFORECAST 21
+#define KEY_GETTIDE 22
 #define KEY_WIND_SPEED3 10
 #define KEY_WIND_DIR3   11
 #define KEY_TIME3  12
@@ -106,6 +107,23 @@ static void long_select_click_handler(ClickRecognizerRef recognizer, void *conte
 
 }
 
+  void select_multi_click_handler(ClickRecognizerRef recognizer, void *context) {
+  int i = click_number_of_clicks_counted(recognizer);
+    
+  if (i==2)
+    {
+      DictionaryIterator *iter;
+    app_message_outbox_begin(&iter);
+
+    // Add a key-value pair
+    dict_write_uint8(iter, KEY_GETTIDE, 0);
+    // Send the message!
+    app_message_outbox_send();
+  }
+    
+  }
+
+
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
       DictionaryIterator *iter;
@@ -141,6 +159,8 @@ static void click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
   window_long_click_subscribe(BUTTON_ID_SELECT, 0, long_select_click_handler, NULL);
+  window_multi_click_subscribe(BUTTON_ID_SELECT, 2, 3, 200, true, select_multi_click_handler);
+
 }
 
 
@@ -210,9 +230,9 @@ static void main_window_load(Window *window) {
   }
     
   
-  text_layer_set_text(s_weather_title[0], "North Head");
-  text_layer_set_text(s_weather_title[1], "Sydney Harbour");
-  text_layer_set_text(s_weather_title[2], "Fort Denison");
+  text_layer_set_text(s_weather_title[0], "All data");
+  text_layer_set_text(s_weather_title[1], "sourced & (c)");
+  text_layer_set_text(s_weather_title[2], "www.bom.gov.au");
   
   // Make sure the time is displayed from the start
   update_time();

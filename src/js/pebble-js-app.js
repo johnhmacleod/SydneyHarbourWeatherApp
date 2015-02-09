@@ -24,18 +24,113 @@ function remove_tags(html)
     return tmp;
   }
 
- 
+var nt = ""; //Next Tide
+var t1 = ""; //Tide info
+
+function getTide() {
+  var url = "http://www.bom.gov.au/australia/tides/print.php?aac=NSW_TP007&type=tide&date=";
+  var url1 = "&region=NSW&tz=Australia/Sydney&days=2"; // Ask for 2 days so we can work out how long to the next tide when the last
+                                                      // tide for the day has already passed
+  var d = new Date();
+  var url2 = url + d.getDate() + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + url1;
+
+//  console.log(url2);
+    xhrRequest(url2, 'GET', 
+    function(responseText) {
+
+      // Assemble dictionary using our keys
+      var response = responseText;
+      HTMLTable(response);
+      Pebble.showSimpleNotificationOnPebble("Tides","For " + d.getDate() + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " Local Times\n" + nt + "\n" + t1);  
+    }      
+  );
+
+}
+
+var r = [];
+var s = [];
+var t = [];
+
+
+function HTMLTable(text) {
+  var i;
+  var d = new Date();
+  var addDay = 0;
+  var ampm, hrs, mins, diff;
+  
+  nt = "";
+  t1 = "";
+  
+  for (i = 0; i < 5; i++) {
+    text = text.substring(text.search(/<th rowspan=[^=]*..instance[^>]*tide.>/));
+    r[i] = text.substring(text.search(">")+1,text.search(/<\/th>/));
+    text = text.substring(text.search(/<td[^=]*..localtime[^>]*>/));
+    s[i] = text.substring(text.search(">")+1,text.search(/<\/td>/)).replace(" ","");
+    text = text.substring(text.search(/<td[^=]*..height[^>]*>/));
+    t[i] = text.substring(text.search(">")+1,text.search(/<\/td>/));
+    if (s[i].search("am") < 0)  // Must be PM
+      ampm = 12;
+    else { // Must be AM
+      if (ampm == 12)  //Back to AM - we've skipped to the next day
+        addDay = 24 * 3600 * 1000; // One day in msec
+      ampm = 0;
+    }
+ //   console.log(i +"->"+ "s[i]="+s[i]);
+    hrs = Number(s[i].substring(0,s[i].search(":")));
+    if (ampm === 0 && hrs == 12) 
+      hrs = 0;
+ //   console.log(i +"->"+ "Hrs="+hrs);
+    mins = Number(s[i].substring(s[i].search(":")+1,s[i].search(/[ap]m/)));
+ //   console.log(i +"->"+" Mins="+mins);
+    var d2 = new Date(d.getFullYear(), d.getMonth(), d.getDate(),  hrs + ampm, mins, 0, 0);
+    diff = addDay + d2.getTime() - d.getTime();
+   if (diff > 0) {
+    var hdiff = (diff / 3600000) | 0;
+    var mdiff = (((diff/3600000) - hdiff) * 60 ) | 0;
+//     console.log(i +"->"+ " Hdiff=" + hdiff + " hdiff /3600000=" +diff/3600000+ " Mdiff=" + mdiff);
+    if (nt === "")
+      {
+        var range;
+        if (i > 0) // This is not the first tide of the day so we can work out the range
+          {
+            var lvl1, lvl2, pc;
+            lvl1 = Number(t[i-1].replace("m",""));
+            lvl2 = Number(t[i].replace("m",""));
+            pc = Math.abs(lvl1-lvl2) / 1.89 * 100;
+            range = "\n" + (pc | 0) + "% max range";
+            console.log(range);
+          }
+     if (hdiff === 0)
+       nt = r[i] + " in " + mdiff + "m";
+     else
+       nt = r[i] + " in " + hdiff + "h " + mdiff + "m";
+     nt = nt + range;
+      }
+//      console.log(i +"->"+" Next " + r[i] + " tide in " + hdiff + " hours" + mdiff + " mins");
+//     console.log(i + "->" + d.getFullYear() + ":" + d.getMonth()+":"+d.getDate()+":"+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds()+":::" + d.getTime());
+//      console.log(i + "->" + d2.getFullYear() + ":" + d2.getMonth()+":"+d2.getDate()+":"+d2.getHours()+":"+d2.getMinutes()+":"+d2.getSeconds()+":::" + d2.getTime());
+   }  
+
+//    console.log("R=" + r[i] + "   S=" + s[i] + "   T=" + t[i]);  
+
+    t1 = t1 + s[i] + " " + t[i].replace(" ","") + "\n";
+  }
+
+    
+
+}
+
+
 function getForecast() {
   var url = "http://www.bom.gov.au/marine/lite/forecast/sydney-closed-waters.shtml";
   xhrRequest(url, 'GET', 
     function(responseText) {
-
+      var d = new Date();
       // Assemble dictionary using our keys
       var response = remove_tags(responseText);
-      var fc_issued_at= response.substring(response.search("Issued"), response.search(/ E[DS]T/));
+      var fc_issued_at= response.substring(response.search("Issued"), response.search(/ E[DS]T/)) + " " + Number(d.getDate()) + "/" + (Number(d.getMonth())+1) + "/" + d.getFullYear();
       var fc_forecast1 = response.substring(response.search("Weather Situation")); // Get us past the first "Forecase for"
       var fc_forecast2 = fc_forecast1.substring(fc_forecast1.search("midnight")+10);
-//      var fc_forecast3 = fc_forecast2.substring(0,20 + fc_forecast2.substring(20).search("Forecast for"));
       var fc_forecast3 = fc_forecast2.substring(0, fc_forecast2.search("Forecast for"));    
       Pebble.showSimpleNotificationOnPebble("Forecast", fc_issued_at + fc_forecast3);
  
@@ -162,9 +257,15 @@ Pebble.addEventListener('appmessage',
       getWind();
 
       }
-    else if (typeof e.payload["KEY_GETFORECAST" != "undefined"])
+    
+    else if (typeof e.payload["KEY_GETFORECAST"] != "undefined")
       {
             getForecast();  
+      }
+    
+    else if (typeof e.payload["KEY_GETTIDE"] != "undefined")
+      {
+        getTide();
       }
   }                     
 );

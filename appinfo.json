@@ -2,6 +2,7 @@
     "appKeys": {
         "KEY_FORECAST_ISSUED": 9,
         "KEY_GETFORECAST": 21,
+        "KEY_GETTIDE": 22,
         "KEY_GETWEATHER": 20,
         "KEY_TIME": 2,
         "KEY_TIME1": 5,
@@ -51,7 +52,7 @@
     "shortName": "HarbourWeather",
     "uuid": "3a2ee932-3fc7-424f-a38b-77b6e1549362",
     "versionCode": 1,
-    "versionLabel": "1.2",
+    "versionLabel": "1.5",
     "watchapp": {
         "watchface": false
     }
