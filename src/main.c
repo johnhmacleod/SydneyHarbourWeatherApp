@@ -23,6 +23,11 @@
 #define KEY_WIND_DIR5   17
 #define KEY_TIME5  18
 
+#ifdef PBL_COLOR
+  #define myColour GColorDarkCandyAppleRed
+#else
+  #define myColour GColorBlack
+#endif
 
 void showWeather();
 static void redisplay(int animate);
@@ -172,15 +177,18 @@ static void main_window_load(Window *window) {
   s_weather_font = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
   s_weather_title_font = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
   
+  window_set_background_color(window, myColour);
+  
   //Create GBitmap, then set to created BitmapLayer
-  s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
-  s_background_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
-  bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap);
-  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_background_layer));
+//  s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
+//  s_background_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+//  bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap);
+//  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_background_layer));
   
   // Create time TextLayer
   s_time_layer = text_layer_create(GRect(0, 138, 144, 30));
-  text_layer_set_background_color(s_time_layer, GColorBlack);
+  
+  text_layer_set_background_color(s_time_layer, myColour);
   text_layer_set_text_color(s_time_layer, GColorWhite);
   
   //Apply to TextLayer
@@ -201,12 +209,12 @@ static void main_window_load(Window *window) {
   s_weather_title[1] = text_layer_create(GRect(0, 74, 144, 18));
   s_weather_layer[2] = text_layer_create(GRect(0, 92, 144, 28));
   s_weather_title[2] = text_layer_create(GRect(0, 120, 144, 18));
-  s_weather_layer[3] = text_layer_create(GRect(0, -46, 144, 28));
-  s_weather_title[3] = text_layer_create(GRect(0, -18, 144, 18));
-  s_weather_layer[4] = text_layer_create(GRect(0, -46, 144, 28));
-  s_weather_title[4] = text_layer_create(GRect(0, -18, 144, 18));
-  s_weather_layer[5] = text_layer_create(GRect(0, -46, 144, 28));
-  s_weather_title[5] = text_layer_create(GRect(0, -18, 144, 18));
+  s_weather_layer[3] = text_layer_create(GRect(0, -46, 144, 28)); // Off Screen
+  s_weather_title[3] = text_layer_create(GRect(0, -18, 144, 18)); // Off Screen
+  s_weather_layer[4] = text_layer_create(GRect(0, -46, 144, 28)); // Off Screen
+  s_weather_title[4] = text_layer_create(GRect(0, -18, 144, 18)); // Off Screen
+  s_weather_layer[5] = text_layer_create(GRect(0, -46, 144, 28)); // Off Screen
+  s_weather_title[5] = text_layer_create(GRect(0, -18, 144, 18)); // Off Screen
   
 
   int i;
@@ -376,24 +384,24 @@ if (animate != 0) //Shifting
   if (animate == 1) //up
     {
     animate_layer(&pa1, text_layer_get_layer(s_weather_layer[shift - 1]), &g1, &g2, 500, 0);
-    animate_layer(&pa2, text_layer_get_layer(s_weather_title[shift - 1]), &g3, &g4, 500, 0);
-    animate_layer(&pa3, text_layer_get_layer(s_weather_layer[0 + shift]), &g5, &g6, 500, 0);
-    animate_layer(&pa4, text_layer_get_layer(s_weather_title[0 + shift]), &g7, &g8, 500, 0);
-    animate_layer(&pa5, text_layer_get_layer(s_weather_layer[1 + shift]), &g9, &gA, 500, 0);
-    animate_layer(&pa6, text_layer_get_layer(s_weather_title[1 + shift]), &gB, &gC, 500, 0);
-    animate_layer(&pa7, text_layer_get_layer(s_weather_layer[2 + shift]), &gD, &gE, 500, 0);
-    animate_layer(&pa8, text_layer_get_layer(s_weather_title[2 + shift]), &gF, &gG, 500, 0);
+    animate_layer(&pa2, text_layer_get_layer(s_weather_title[shift - 1]), &g3, &g4, 500, 30);
+    animate_layer(&pa3, text_layer_get_layer(s_weather_layer[0 + shift]), &g5, &g6, 500, 60);
+    animate_layer(&pa4, text_layer_get_layer(s_weather_title[0 + shift]), &g7, &g8, 500, 90);
+    animate_layer(&pa5, text_layer_get_layer(s_weather_layer[1 + shift]), &g9, &gA, 500, 120);
+    animate_layer(&pa6, text_layer_get_layer(s_weather_title[1 + shift]), &gB, &gC, 500, 150);
+    animate_layer(&pa7, text_layer_get_layer(s_weather_layer[2 + shift]), &gD, &gE, 500, 180);
+    animate_layer(&pa8, text_layer_get_layer(s_weather_title[2 + shift]), &gF, &gG, 500, 210);
   }
   else // Down
    {
     animate_layer(&pa3, text_layer_get_layer(s_weather_layer[0 + shift]), &g2, &g1, 500, 0);
-    animate_layer(&pa4, text_layer_get_layer(s_weather_title[0 + shift]), &g4, &g3, 500, 0);
-    animate_layer(&pa5, text_layer_get_layer(s_weather_layer[1 + shift]), &g6, &g5, 500, 0);
-    animate_layer(&pa6, text_layer_get_layer(s_weather_title[1 + shift]), &g8, &g7, 500, 0);
-    animate_layer(&pa7, text_layer_get_layer(s_weather_layer[2 + shift]), &gA, &g9, 500, 0);
-    animate_layer(&pa8, text_layer_get_layer(s_weather_title[2 + shift]), &gC, &gB, 500, 0);
-    animate_layer(&pa1, text_layer_get_layer(s_weather_layer[shift + 3]), &gE, &gD, 500, 0);
-    animate_layer(&pa2, text_layer_get_layer(s_weather_title[shift + 3]), &gG, &gF, 500, 0);
+    animate_layer(&pa4, text_layer_get_layer(s_weather_title[0 + shift]), &g4, &g3, 500, 30);
+    animate_layer(&pa5, text_layer_get_layer(s_weather_layer[1 + shift]), &g6, &g5, 500, 60);
+    animate_layer(&pa6, text_layer_get_layer(s_weather_title[1 + shift]), &g8, &g7, 500, 90);
+    animate_layer(&pa7, text_layer_get_layer(s_weather_layer[2 + shift]), &gA, &g9, 500, 120);
+    animate_layer(&pa8, text_layer_get_layer(s_weather_title[2 + shift]), &gC, &gB, 500, 150);
+    animate_layer(&pa1, text_layer_get_layer(s_weather_layer[shift + 3]), &gE, &gD, 500, 180);
+    animate_layer(&pa2, text_layer_get_layer(s_weather_title[shift + 3]), &gG, &gF, 500, 210);
   } 
     
 }
@@ -497,7 +505,9 @@ static void init() {
     .unload = main_window_unload
   });
   
+#ifndef PBL_COLOR
   window_set_fullscreen(s_main_window, true);
+#endif
 
   // Show the Window on the watch, with animated=true
   window_stack_push(s_main_window, true);

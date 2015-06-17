@@ -24,13 +24,19 @@
         "KEY_WIND_SPEED5": 16
     },
     "capabilities": [
-        ""
+        "configurable"
     ],
     "companyName": "John MacLeod",
     "longName": "Sydney Harbour Weather",
     "projectType": "native",
     "resources": {
         "media": [
+            {
+                "file": "images/SH28.png",
+                "menuIcon": true,
+                "name": "MENU_28",
+                "type": "png"
+            },
             {
                 "file": "images/background.png",
                 "name": "IMAGE_BACKGROUND",
@@ -40,19 +46,17 @@
                 "file": "images/SydneyWeather.png",
                 "name": "MENU_IMAGE",
                 "type": "png"
-            },
-            {
-                "file": "images/SH28.png",
-                "menuIcon": true,
-                "name": "MENU_28",
-                "type": "png"
             }
         ]
     },
+    "sdkVersion": "3",
     "shortName": "HarbourWeather",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
     "uuid": "3a2ee932-3fc7-424f-a38b-77b6e1549362",
-    "versionCode": 1,
-    "versionLabel": "1.5",
+    "versionLabel": "1.7",
     "watchapp": {
         "watchface": false
     }
